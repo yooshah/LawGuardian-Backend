@@ -1,0 +1,6 @@
+@LawGuardian.API_HostAddress = http://localhost:5062
+
+GET {{LawGuardian.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
