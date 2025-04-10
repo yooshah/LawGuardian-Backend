@@ -1,4 +1,6 @@
-﻿using LawGuardian.Application.Features.Auth.DTOs;
+﻿using LawGuardian.Application.Features.Auth.Commands;
+using LawGuardian.Application.Features.Auth.DTOs;
+using LawGuardian.Application.Features.Auth.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,16 +13,57 @@ namespace LawGuardian.API.Controllers
     {
 
         private readonly ISender _sender;
-        public AuthController()
+        public AuthController(ISender sender)
         {
 
-
+            _sender= sender;
             
         }
 
-        public async Task <IActionResult> Register(RegisterRequest registerRequest)
+        [HttpPost("client/register")]
+        public async Task <IActionResult> Register([FromBody] RegisterRequest registerRequest ,CancellationToken cancellationToken)
         {
 
+            if (registerRequest == null)
+            {
+                return BadRequest( new RegisterUserResponse { Message = "Invalid registration data", Success = false });
+            }
+          
+            var result=await _sender.Send(new RegisterUserCommand(registerRequest), cancellationToken);
+
+           
+            if(!result.Success)
+            {
+                return Conflict(result);
+            }
+
+            return Ok(result);
+
         }
+
+
+        [HttpPost("client/login")]
+
+        public async Task <IActionResult> UserLogin(LoginRequest loginRequest, CancellationToken cancellationToken)
+        {
+
+            if (loginRequest == null)
+            {
+                return BadRequest(new LoginUserResponse { Message="Invalid Login Data" });
+
+            }
+
+            var result = await _sender.Send(new LoginUserQuery(loginRequest.Identifier, loginRequest.Password),cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result); 
+            }
+
+            return Ok(result);
+        }
+
+
+
     }
 }

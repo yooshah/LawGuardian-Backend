@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LawGuardian.Application.Features.Auth.Commands
+namespace LawGuardian.Application.Features.Auth.Queries
 {
-    public record RegisterUserCommand (RegisterRequest RegisterRequest) : IRequest<RegisterUserResponse>;
+    public  record LoginUserQuery(string Identifier, string password) : IRequest<LoginUserResponse>;
+   
 }
-    

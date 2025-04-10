@@ -20,7 +20,7 @@ namespace LawGuardian.Application.Features.Auth.Validators
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
-                .Matches(@"^(=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$")
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$")
                 .WithMessage("Password must be 8-15 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.");
 
             RuleFor(x => x.Phone)

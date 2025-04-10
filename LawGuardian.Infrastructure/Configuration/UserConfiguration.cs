@@ -23,6 +23,10 @@ namespace LawGuardian.Infrastructure.Configuration
                    .IsRequired()
                    .HasMaxLength(60);
 
+            builder.Property(u => u.Password)
+                   .IsRequired()
+                   .HasMaxLength(100);
+
             builder.Property(u=>u.City)
                 .IsRequired()
                 .HasMaxLength(30);

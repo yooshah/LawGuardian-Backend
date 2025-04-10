@@ -20,3 +20,4 @@ namespace LawGuardian.Application.Features.Auth.DTOs
 
     }
 }
+ 

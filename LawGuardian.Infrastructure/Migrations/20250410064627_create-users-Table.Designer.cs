@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LawGuardian.Infrastructure.Migrations
 {
     [DbContext(typeof(LawGuardianDbContext))]
-    [Migration("20250409094802_create-users-Table")]
+    [Migration("20250410064627_create-users-Table")]
     partial class createusersTable
     {
         /// <inheritdoc />
@@ -52,11 +52,10 @@ namespace LawGuardian.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("IsBlocked")
-                        .IsRequired()
+                    b.Property<bool>("IsBlocked")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("False");
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -65,8 +64,8 @@ namespace LawGuardian.Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
