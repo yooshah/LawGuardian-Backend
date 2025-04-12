@@ -20,19 +20,23 @@ namespace LawGuardian.Application.Features.Auth.Handlers
 
         private readonly IAuthRepositiry _authRepostory;
         private readonly IHashingService _hashingService;
+        private readonly IEmailVerificationService _emailVerificationService;
+        private readonly IEmailVerificationRepository _emailVerificationRepository;
         private readonly IMapper _mapper;
 
-        public RegisterUserCommandHandler(IAuthRepositiry authRepositiry,IHashingService hashingService,IMapper mapper)
+        public RegisterUserCommandHandler(IAuthRepositiry authRepositiry,IHashingService hashingService,IEmailVerificationService emailVerificationService,IEmailVerificationRepository emailVerificationRepository,IMapper mapper)
         {
             _authRepostory = authRepositiry;
             _hashingService = hashingService;
+            _emailVerificationService=emailVerificationService;
+            _emailVerificationRepository=emailVerificationRepository;
             _mapper = mapper;
         }
         public async Task<RegisterUserResponse> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
 
 
-            var isuserEmailAlreadyExist = await _authRepostory.UserEmailAlreadyExistAsync(request.RegisterRequest.Email);
+            var isuserEmailAlreadyExist = await _authRepostory.GetUserByEmailAsync(request.RegisterRequest.Email);
 
             if (isuserEmailAlreadyExist != null)
             {
@@ -43,6 +47,8 @@ namespace LawGuardian.Application.Features.Auth.Handlers
                 };
 
             }
+
+
 
             var isPhoneNumberAlreadyExist=await _authRepostory.GetUserByPhoneAsync(request.RegisterRequest.Phone);
             if (isPhoneNumberAlreadyExist != null)
@@ -62,10 +68,31 @@ namespace LawGuardian.Application.Features.Auth.Handlers
 
             var isSaved = await _authRepostory.RegisterNewUser(registerData);
 
+            if(!isSaved)
+            {
+                return new RegisterUserResponse
+                {
+                    Success = false,
+                    Message = "Registration failed"
+                };
+            }
+
+            string otp = _emailVerificationService.OtpGenerator();
+
+
+            EmailVerification emailVerification=new EmailVerification { Email=request.RegisterRequest.Email,Otp=otp,ExpireTime=DateTime.UtcNow.AddMinutes(5)};
+
+            var isEmailVerificationCreated=await _emailVerificationRepository.AddEmailVerificationAsync(emailVerification);
+
+            if(isEmailVerificationCreated)
+            {
+                await _emailVerificationService.SendOtpEmailAsync(request.RegisterRequest.Email,otp,"Email Verification");
+            }
+            
             return new RegisterUserResponse
             {
-                Success = isSaved,
-                Message = isSaved ? "Successfully registered" : "Registration failed"
+                Success = true,
+                Message ="Successfully registered" 
             };
 
 

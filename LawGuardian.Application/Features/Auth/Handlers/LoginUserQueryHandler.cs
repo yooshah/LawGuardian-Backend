@@ -26,12 +26,16 @@ namespace LawGuardian.Application.Features.Auth.Handlers
         public async Task<LoginUserResponse> Handle(LoginUserQuery request, CancellationToken cancellationToken)
         {
 
-            var result = await _authRepositiry.GetUserByEmailOrPhoneAsync(request.Identifier);
+            var result = await _authRepositiry.GetUserByEmailAsync(request.email);
             if (result == null)
             {
                 return new LoginUserResponse {IsSuccess=false, Message="Invalid user data! Email Or Phone Number Not Found"};
             }
 
+            if (!result.IsEmailVerified)
+            {
+                throw new UnauthorizedAccessException("Email Not Verified");
+            }
             var checkPassword= _hashingService.VerifyPassword(request.password,result.Password);
             if (!checkPassword)
             {

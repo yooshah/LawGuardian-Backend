@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 
 namespace LawGuardian.Application.Features.Auth.Queries
 {
-    public  record LoginUserQuery(string Identifier, string password) : IRequest<LoginUserResponse>;
+    public  record LoginUserQuery(string email, string password) : IRequest<LoginUserResponse>;
    
 }

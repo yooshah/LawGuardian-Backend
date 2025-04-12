@@ -31,7 +31,7 @@ namespace LawGuardian.Infrastructure.Repository.Auth
 
         }
 
-        public async Task<User?> UserEmailAlreadyExistAsync(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
 
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
@@ -47,6 +47,12 @@ namespace LawGuardian.Infrastructure.Repository.Auth
         {
             return await _context.Users
             .FirstOrDefaultAsync(u => u.Email == identifier || u.Phone == identifier);
+        }
+
+        public async Task UpdateUserEmailVerification(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

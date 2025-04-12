@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿using LawGuardian.Application.Exceptions;
+using Microsoft.Identity.Client;
 
 namespace LawGuardian.API.Middleware
 {
@@ -30,7 +31,18 @@ namespace LawGuardian.API.Middleware
                     _logger.LogError($"{ex.InnerException.GetType().ToString()}:{ex.InnerException.Message}");
                 }
                 httpContext.Response.ContentType = "application/json";
-                httpContext.Response.StatusCode = 500;
+                httpContext.Response.StatusCode = ex switch
+                {
+                    BadHttpRequestException => StatusCodes.Status400BadRequest,
+                    UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    NotFoundException => StatusCodes.Status404NotFound,
+                    ForbiddenException => StatusCodes.Status403Forbidden,
+                    ConflictException => StatusCodes.Status409Conflict,
+                    _ => StatusCodes.Status500InternalServerError
+                };
+
+
+
 
                 await httpContext.Response.WriteAsJsonAsync(new { Message = ex.Message, Type = ex.GetType().ToString() });
             }

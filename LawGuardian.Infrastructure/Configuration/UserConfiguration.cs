@@ -27,19 +27,8 @@ namespace LawGuardian.Infrastructure.Configuration
                    .IsRequired()
                    .HasMaxLength(100);
 
-            builder.Property(u=>u.City)
-                .IsRequired()
-                .HasMaxLength(30);
 
-            builder.Property(u=>u.State)
-                .IsRequired()
-                .HasMaxLength(30);
-
-            builder.Property(u=>u.FirstName)
-                .IsRequired()
-                .HasMaxLength(30);
-
-            builder.Property(u => u.LastName)
+            builder.Property(u => u.FullName)
                 .IsRequired()
                 .HasMaxLength(30);
 
@@ -52,6 +41,11 @@ namespace LawGuardian.Infrastructure.Configuration
               .IsRequired()
               .HasMaxLength(15);
 
+            builder.Property(u => u.IsProfileComplete)
+                .HasDefaultValue(false);
+
+            builder.Property(u=>u.IsEmailVerified)
+                .HasDefaultValue (false);
 
             builder.Property(u => u.IsBlocked)
                    .HasDefaultValue(false);

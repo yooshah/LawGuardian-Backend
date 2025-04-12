@@ -16,6 +16,8 @@ namespace LawGuardian.Infrastructure.Persistence
        
         public DbSet<User> Users { get; set; }
 
+        public DbSet<EmailVerification> EmailVerifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

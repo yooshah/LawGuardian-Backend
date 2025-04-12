@@ -13,9 +13,10 @@ namespace LawGuardian.Application.Features.Auth.Validators
     {
         public LoginRequestValidator()
         {
-            RuleFor(x => x.Identifier)
-                .NotEmpty().WithMessage("Email or phone number is required.")
-                .Must(BeAValidEmailOrPhone).WithMessage("Identifier must be a valid email or phone number.");
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .Must(BeAValidEmail).WithMessage("Invalid email format.");
+
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
@@ -24,16 +25,14 @@ namespace LawGuardian.Application.Features.Auth.Validators
 
         }
 
-        private bool BeAValidEmailOrPhone(string identifier)
+        private bool BeAValidEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(identifier))
+            if (string.IsNullOrWhiteSpace(email))
                 return false;
 
-            // Simple email and phone regex patterns
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            var phoneRegex = @"^\d{10}$";
-
-            return Regex.IsMatch(identifier, emailRegex) || Regex.IsMatch(identifier, phoneRegex);
+            return Regex.IsMatch(email, emailRegex);
         }
+
     }
 }

@@ -53,16 +53,32 @@ namespace LawGuardian.API.Controllers
 
             }
 
-            var result = await _sender.Send(new LoginUserQuery(loginRequest.Identifier, loginRequest.Password),cancellationToken);
+            var result = await _sender.Send(new LoginUserQuery(loginRequest.Email, loginRequest.Password),cancellationToken);
 
             if (!result.IsSuccess)
             {
                 return BadRequest(result); 
             }
 
-            return Ok(result);
+            return Ok(new{ Message=result});
         }
 
+
+        [HttpPost("EmailVerify-otp")]
+        public async Task<IActionResult> VerfyEmailByOtp(OtpVerificationRequest otpVerificationRequest)
+        {
+            if(otpVerificationRequest == null)
+            {
+                return BadRequest("Invalid Data");
+            }
+            var result = await _sender.Send(new EmailVerificationCommand(otpVerificationRequest.Email, otpVerificationRequest.Otp));
+
+            return Ok(result);
+
+        }
+
+        
+        
 
 
     }
